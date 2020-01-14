@@ -10,14 +10,24 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.airlinerToggleComment"
+		"onCommand:extension.airlinerToggleComment",
+		"onCommand:extension.airlinerUntabify",
+		"onCommand:extension.airlinerCutToEol"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
 				"command": "extension.airlinerToggleComment",
-				"title": "Hello World"
+				"title": "Airliner Toggle Comment"
+			},
+			{
+				"command": "extension.airlinerUntabify",
+				"title": "Airliner Untabify"
+			},
+			{
+				"command": "extension.airlinerCutToEol",
+				"title": "Airliner Cut to EOL"
 			}
 		]
 	},
