@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import {toggleComment} from "./depot/comment";
+import * as copyPaste from "copy-paste";
 
 
 // The module 'vscode' contains the VS Code extensibility API
@@ -106,11 +107,36 @@ export function activate(context: vscode.ExtensionContext) {
 
 
     ////////////////////////////////////////////////////////////////////////////
-    // TODO: IMPLEMENT
+
     disposable = vscode.commands.registerCommand("extension.airlinerCutToEol", async () =>
     {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showInformationMessage("There is no active editor.");
+            return;
+        }
+
+        const startPos = editor.selection.active;
+        const endPos = new vscode.Position(editor.selection.active.line, 1000);
+        const killRange = new vscode.Range(startPos, endPos);
+
+        const trailingText =  editor.document.getText(killRange);
+        if (trailingText.length > 0) {
+            copyPaste.copy(trailingText);
+            await editor.edit((editBuilder: vscode.TextEditorEdit) => {
+                editBuilder.replace(killRange, "");
+            });
+        }
+        else {
+            // TODO: Just delete the EOL
+            vscode.commands.executeCommand("deleteRight");
+        }
     });
     context.subscriptions.push(disposable);
+
+    ////////////////////////////////////////////////////////////////////////////////
+
+    // TODO: Create a command for appending semicolon.
 }
 
 // this method is called when your extension is deactivated
