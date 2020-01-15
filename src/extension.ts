@@ -94,10 +94,10 @@ export function activate(context: vscode.ExtensionContext) {
         const newDocText = docText.replace(/\t/g, expanded);
 
         // Select the entire document.
-        editor.selection = new vscode.Selection(0, 0, numLines - 1, 1000);
+        const wholeDocRange = new vscode.Range(0, 0, numLines - 1, 1000);
 
         await editor.edit((editBuilder: vscode.TextEditorEdit) => {
-            editBuilder.replace(editor.selection, newDocText);
+            editBuilder.replace(wholeDocRange, newDocText);
         });
 
         // Restore the cursor position.
