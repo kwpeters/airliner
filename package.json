@@ -12,23 +12,29 @@
 	"activationEvents": [
 		"onCommand:extension.airlinerToggleComment",
 		"onCommand:extension.airlinerUntabify",
-		"onCommand:extension.airlinerCutToEol"
+		"onCommand:extension.airlinerCutToEol",
+        "onCommand:extension.airlinerAppendSemicolon"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
-			{
-				"command": "extension.airlinerToggleComment",
-				"title": "Airliner Toggle Comment"
-			},
-			{
+            {
+                "command": "extension.airlinerToggleComment",
+                "title": "Airliner Toggle Comment"
+            },
+            {
 				"command": "extension.airlinerUntabify",
 				"title": "Airliner Untabify"
 			},
 			{
 				"command": "extension.airlinerCutToEol",
 				"title": "Airliner Cut to EOL"
-			}
+			},
+            {
+                "command": "extension.airlinerAppendSemicolon",
+                "title": "Airliner Append Semicolon"
+            }
+
 		]
 	},
 	"scripts": {

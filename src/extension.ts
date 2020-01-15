@@ -202,7 +202,18 @@ export function activate(context: vscode.ExtensionContext) {
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    // TODO: Create a command for appending semicolon.
+    disposable = vscode.commands.registerCommand("extension.airlinerAppendSemicolon", async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showInformationMessage("There is no active editor.");
+            return;
+        }
+
+        await editor.edit((editBuilder: vscode.TextEditorEdit) => {
+            editBuilder.insert(new vscode.Position(editor.selection.active.line, 10000), ";");
+        });
+    });
+    context.subscriptions.push(disposable);
 }
 
 // this method is called when your extension is deactivated
