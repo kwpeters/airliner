@@ -108,6 +108,10 @@ export function activate(context: vscode.ExtensionContext) {
 
     ////////////////////////////////////////////////////////////////////////////
 
+    const cutAccrueTimeout = 2 * 1000;
+    let cutAccrueTimeoutHandle: NodeJS.Timeout | undefined;;
+    let accruingCutContents = false;
+
     disposable = vscode.commands.registerCommand("extension.airlinerCutToEol", async () =>
     {
         const editor = vscode.window.activeTextEditor;
@@ -122,17 +126,68 @@ export function activate(context: vscode.ExtensionContext) {
 
         const trailingText =  editor.document.getText(killRange);
         if (trailingText.length > 0) {
-            copyPaste.copy(trailingText);
+
+            if (accruingCutContents) {
+                const clipboardContent = await getClipboardContent();
+                copyPaste.copy(clipboardContent + trailingText);
+            }
+            else {
+                copyPaste.copy(trailingText);
+            }
+
+            // Remove the text we just copied.
             await editor.edit((editBuilder: vscode.TextEditorEdit) => {
                 editBuilder.replace(killRange, "");
             });
         }
         else {
-            // TODO: Just delete the EOL
+            if (accruingCutContents) {
+                const clipboardContent = await getClipboardContent();
+                copyPaste.copy(clipboardContent + "\n");
+            }
+
             vscode.commands.executeCommand("deleteRight");
         }
+
+        // Restart the inactivity timer.
+        restartCutAccrueTimeout();
+
+        accruingCutContents = true;
     });
     context.subscriptions.push(disposable);
+
+    function restartCutAccrueTimeout(): void
+    {
+        // Stop the previous timeout from completing (if there was one).
+        if (cutAccrueTimeoutHandle) {
+            clearTimeout(cutAccrueTimeoutHandle);
+            cutAccrueTimeoutHandle = undefined;
+        }
+
+        // Start a new timeout.
+        cutAccrueTimeoutHandle = setTimeout(
+            () => {
+                accruingCutContents = false;
+            },
+            cutAccrueTimeout
+        );
+    }
+
+    function getClipboardContent(): Promise<string>
+    {
+        return new Promise((resolve) => {
+            copyPaste.paste((err, clipboardContents: string) => {
+                if (err) {
+                    vscode.window.showInformationMessage("Could not get clipboard contents.");
+                    resolve("");
+                }
+                else {
+                    resolve(clipboardContents);
+                }
+            });
+        });
+
+    }
 
     ////////////////////////////////////////////////////////////////////////////////
 
