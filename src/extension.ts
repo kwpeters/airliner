@@ -1,7 +1,7 @@
 import * as _ from "lodash";
-import {toggleComment} from "./depot/comment";
 import * as copyPaste from "copy-paste";
-
+import {toggleComment} from "./depot/comment";
+import {Timeout} from "./depot/timers";
 
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
@@ -111,9 +111,7 @@ export function activate(context: vscode.ExtensionContext) {
     // If the user executes this command within this timeout period, this
     // command will keep adding cut text to the clipboard.  Once the timeout
     // expires, this command will replace the clipboard's contents.
-    const cutAccrueTimeout = 2 * 1000;
-    let cutAccrueTimeoutHandle: NodeJS.Timeout | undefined;
-    let accruingCutContents = false;
+    const accrueTimeout = new Timeout(2 * 1000);
 
     disposable = vscode.commands.registerCommand("extension.airlinerCutToEol", async () =>
     {
@@ -130,7 +128,7 @@ export function activate(context: vscode.ExtensionContext) {
         const killText =  editor.document.getText(killRange);
         if (killText.length > 0) {
 
-            if (accruingCutContents) {
+            if (accrueTimeout.isRunning()) {
                 const clipboardContent = await getClipboardContent();
                 copyPaste.copy(clipboardContent + killText);
             }
@@ -144,7 +142,7 @@ export function activate(context: vscode.ExtensionContext) {
             });
         }
         else {
-            if (accruingCutContents) {
+            if (accrueTimeout.isRunning()) {
                 const clipboardContent = await getClipboardContent();
                 copyPaste.copy(clipboardContent + "\n");
             }
@@ -155,32 +153,10 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.commands.executeCommand("deleteRight");
         }
 
-        // Restart the inactivity timer.
-        restartCutAccrueTimeout();
+        // Restart the accure timeout.
+        accrueTimeout.start();
     });
     context.subscriptions.push(disposable);
-
-
-    // Helper function that cancels the current timeout and starts a new one.
-    function restartCutAccrueTimeout(): void
-    {
-        accruingCutContents = true;
-
-        // Stop the previous timeout from completing (if there was one).
-        if (cutAccrueTimeoutHandle) {
-            clearTimeout(cutAccrueTimeoutHandle);
-            cutAccrueTimeoutHandle = undefined;
-        }
-
-        // Start a new timeout.
-        cutAccrueTimeoutHandle = setTimeout(
-            () => {
-                accruingCutContents = false;
-            },
-            cutAccrueTimeout
-        );
-    }
-
 
     // Helper function that gets the current contents of the clipboard.
     function getClipboardContent(): Promise<string>
