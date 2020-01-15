@@ -108,8 +108,11 @@ export function activate(context: vscode.ExtensionContext) {
 
     ////////////////////////////////////////////////////////////////////////////
 
+    // If the user executes this command within this timeout period, this
+    // command will keep adding cut text to the clipboard.  Once the timeout
+    // expires, this command will replace the clipboard's contents.
     const cutAccrueTimeout = 2 * 1000;
-    let cutAccrueTimeoutHandle: NodeJS.Timeout | undefined;;
+    let cutAccrueTimeoutHandle: NodeJS.Timeout | undefined;
     let accruingCutContents = false;
 
     disposable = vscode.commands.registerCommand("extension.airlinerCutToEol", async () =>
@@ -124,18 +127,18 @@ export function activate(context: vscode.ExtensionContext) {
         const endPos = new vscode.Position(editor.selection.active.line, 1000);
         const killRange = new vscode.Range(startPos, endPos);
 
-        const trailingText =  editor.document.getText(killRange);
-        if (trailingText.length > 0) {
+        const killText =  editor.document.getText(killRange);
+        if (killText.length > 0) {
 
             if (accruingCutContents) {
                 const clipboardContent = await getClipboardContent();
-                copyPaste.copy(clipboardContent + trailingText);
+                copyPaste.copy(clipboardContent + killText);
             }
             else {
-                copyPaste.copy(trailingText);
+                copyPaste.copy(killText);
             }
 
-            // Remove the text we just copied.
+            // Remove the kill text from the doucment.
             await editor.edit((editBuilder: vscode.TextEditorEdit) => {
                 editBuilder.replace(killRange, "");
             });
@@ -145,19 +148,24 @@ export function activate(context: vscode.ExtensionContext) {
                 const clipboardContent = await getClipboardContent();
                 copyPaste.copy(clipboardContent + "\n");
             }
+            else {
+                copyPaste.copy("\n");
+            }
 
             vscode.commands.executeCommand("deleteRight");
         }
 
         // Restart the inactivity timer.
         restartCutAccrueTimeout();
-
-        accruingCutContents = true;
     });
     context.subscriptions.push(disposable);
 
+
+    // Helper function that cancels the current timeout and starts a new one.
     function restartCutAccrueTimeout(): void
     {
+        accruingCutContents = true;
+
         // Stop the previous timeout from completing (if there was one).
         if (cutAccrueTimeoutHandle) {
             clearTimeout(cutAccrueTimeoutHandle);
@@ -173,6 +181,8 @@ export function activate(context: vscode.ExtensionContext) {
         );
     }
 
+
+    // Helper function that gets the current contents of the clipboard.
     function getClipboardContent(): Promise<string>
     {
         return new Promise((resolve) => {
@@ -188,6 +198,7 @@ export function activate(context: vscode.ExtensionContext) {
         });
 
     }
+
 
     ////////////////////////////////////////////////////////////////////////////////
 
