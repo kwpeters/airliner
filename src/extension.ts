@@ -10,14 +10,14 @@ import * as vscode from 'vscode';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+    // This function will only be executed once when your extension is activated.
 
     // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "airliner" is now active!');
+    // console.log('Airliner extension is now active.');
 
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with registerCommand
-    // The commandId parameter must match the command field in package.json
+    // Commands are defined in the package.json file.
+    // Now provide their implementations using registerCommand().
+
     let disposable: vscode.Disposable;
 
     ////////////////////////////////////////////////////////////////////////////
@@ -194,7 +194,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    disposable = vscode.commands.registerCommand("extension.airlinerAppendSemicolon", async () => {
+    disposable = vscode.commands.registerCommand("extension.airlinerAppendSemicolon", async () =>
+    {
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
             vscode.window.showInformationMessage("There is no active editor.");
