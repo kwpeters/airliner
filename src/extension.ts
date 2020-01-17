@@ -133,6 +133,11 @@ export function activate(context: vscode.ExtensionContext) {
 
         const toEolText =  editor.document.getText(toEolRange);
         if (toEolText.length > 0) {
+
+            // If the text remaining on the line is whitespace followed by
+            // non-whitespace, then kill just the leading whitespace.  By
+            // removing just the whitespace, we will make joining two lines
+            // easier.
             const match = textWithLeadingWhitespace.exec(toEolText);
             if (match) {
                 const leadingWhitespace = match.groups!.leadingWhitespace;
