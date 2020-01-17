@@ -121,6 +121,9 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
+        // If we are accruing copied text (due to the timeout timer), then the
+        // text we need to copy should start with the current clipboard
+        // contents.
         let textToCopy: string = accrueTimeout.isRunning() ? await getClipboardContent() : "";
 
         const activePos = editor.selection.active;
