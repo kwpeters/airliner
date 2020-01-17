@@ -121,14 +121,15 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
+        let textToCopy: string = accrueTimeout.isRunning() ? await getClipboardContent() : "";
+
         const startPos = editor.selection.active;
         const endPos = new vscode.Position(editor.selection.active.line, 1000);
         const killRange = new vscode.Range(startPos, endPos);
 
         const killText =  editor.document.getText(killRange);
         if (killText.length > 0) {
-            const accumulatedText: string = accrueTimeout.isRunning() ? await getClipboardContent() : "";
-            copyPaste.copy(accumulatedText + killText);
+            textToCopy += killText;
 
             // Remove the kill text from the doucment.
             await editor.edit((editBuilder: vscode.TextEditorEdit) => {
@@ -136,10 +137,11 @@ export function activate(context: vscode.ExtensionContext) {
             });
         }
         else {
-            const accumulatedText: string = accrueTimeout.isRunning() ? await getClipboardContent() : "";
-            copyPaste.copy(accumulatedText + "\n");
+            textToCopy += "\n";
             vscode.commands.executeCommand("deleteRight");
         }
+
+        copyPaste.copy(textToCopy);
 
         // Restart the accure timeout.
         accrueTimeout.start();
