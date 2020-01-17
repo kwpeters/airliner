@@ -127,14 +127,8 @@ export function activate(context: vscode.ExtensionContext) {
 
         const killText =  editor.document.getText(killRange);
         if (killText.length > 0) {
-
-            if (accrueTimeout.isRunning()) {
-                const clipboardContent = await getClipboardContent();
-                copyPaste.copy(clipboardContent + killText);
-            }
-            else {
-                copyPaste.copy(killText);
-            }
+            const accumulatedText: string = accrueTimeout.isRunning() ? await getClipboardContent() : "";
+            copyPaste.copy(accumulatedText + killText);
 
             // Remove the kill text from the doucment.
             await editor.edit((editBuilder: vscode.TextEditorEdit) => {
@@ -142,14 +136,8 @@ export function activate(context: vscode.ExtensionContext) {
             });
         }
         else {
-            if (accrueTimeout.isRunning()) {
-                const clipboardContent = await getClipboardContent();
-                copyPaste.copy(clipboardContent + "\n");
-            }
-            else {
-                copyPaste.copy("\n");
-            }
-
+            const accumulatedText: string = accrueTimeout.isRunning() ? await getClipboardContent() : "";
+            copyPaste.copy(accumulatedText + "\n");
             vscode.commands.executeCommand("deleteRight");
         }
 
