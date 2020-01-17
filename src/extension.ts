@@ -123,17 +123,17 @@ export function activate(context: vscode.ExtensionContext) {
 
         let textToCopy: string = accrueTimeout.isRunning() ? await getClipboardContent() : "";
 
-        const startPos = editor.selection.active;
-        const endPos = new vscode.Position(editor.selection.active.line, 1000);
-        const killRange = new vscode.Range(startPos, endPos);
+        const activePos = editor.selection.active;
+        const eolPos = new vscode.Position(editor.selection.active.line, 1000);
+        const toEolRange = new vscode.Range(activePos, eolPos);
 
-        const killText =  editor.document.getText(killRange);
-        if (killText.length > 0) {
-            textToCopy += killText;
+        const toEolText =  editor.document.getText(toEolRange);
+        if (toEolText.length > 0) {
+            textToCopy += toEolText;
 
             // Remove the kill text from the doucment.
             await editor.edit((editBuilder: vscode.TextEditorEdit) => {
-                editBuilder.replace(killRange, "");
+                editBuilder.replace(toEolRange, "");
             });
         }
         else {
