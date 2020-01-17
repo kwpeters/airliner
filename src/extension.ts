@@ -112,6 +112,7 @@ export function activate(context: vscode.ExtensionContext) {
     // command will keep adding cut text to the clipboard.  Once the timeout
     // expires, this command will replace the clipboard's contents.
     const accrueTimeout = new Timeout(2 * 1000);
+    const textWithLeadingWhitespace = /^(?<leadingWhitespace>\s+)\S+/;
 
     disposable = vscode.commands.registerCommand("extension.airlinerCutToEol", async () =>
     {
@@ -132,12 +133,29 @@ export function activate(context: vscode.ExtensionContext) {
 
         const toEolText =  editor.document.getText(toEolRange);
         if (toEolText.length > 0) {
-            textToCopy += toEolText;
+            const match = textWithLeadingWhitespace.exec(toEolText);
+            if (match) {
+                const leadingWhitespace = match.groups!.leadingWhitespace;
+                textToCopy += leadingWhitespace;
 
-            // Remove the kill text from the doucment.
-            await editor.edit((editBuilder: vscode.TextEditorEdit) => {
-                editBuilder.replace(toEolRange, "");
-            });
+                const whitespaceRange = new vscode.Range(
+                    activePos,
+                    new vscode.Position(activePos.line, activePos.character + leadingWhitespace.length)
+                );
+
+                // Remove the kill text from the document.
+                await editor.edit((editBuilder: vscode.TextEditorEdit) => {
+                    editBuilder.replace(whitespaceRange, "");
+                });
+            }
+            else {
+                textToCopy += toEolText;
+
+                // Remove the kill text from the doucment.
+                await editor.edit((editBuilder: vscode.TextEditorEdit) => {
+                    editBuilder.replace(toEolRange, "");
+                });
+            }
         }
         else {
             textToCopy += "\n";
