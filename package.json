@@ -13,7 +13,8 @@
 		"onCommand:extension.airlinerToggleComment",
 		"onCommand:extension.airlinerUntabify",
 		"onCommand:extension.airlinerCutToEol",
-        "onCommand:extension.airlinerAppendSemicolon"
+        "onCommand:extension.airlinerAppendSemicolon",
+        "onCommand:extension.airlinerHungryBackspace"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -33,8 +34,11 @@
             {
                 "command": "extension.airlinerAppendSemicolon",
                 "title": "Airliner Append Semicolon"
+            },
+            {
+                "command": "extension.airlinerHungryBackspace",
+                "title": "Airliner Hungry Backspace"
             }
-
 		]
 	},
 	"scripts": {

@@ -207,6 +207,62 @@ export function activate(context: vscode.ExtensionContext) {
         });
     });
     context.subscriptions.push(disposable);
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+
+    disposable = vscode.commands.registerCommand("extension.airlinerHungryBackspace", async () =>
+    {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor)
+        {
+            vscode.window.showInformationMessage("There is no active editor.");
+            return;
+        }
+
+        let done = false;
+        let numDeletionsMade = 0;
+        while (!done) {
+
+            const activePos = editor.selection.active;
+            if (numDeletionsMade === 0 && activePos.character === 0) {
+                // If we are just starting and in column 0, backspace to the end
+                // of the preceding line.  In this case, we are not done and may
+                // delete whitespace at the end of the preceding line.
+                await vscode.commands.executeCommand("deleteLeft");
+                numDeletionsMade++;
+                continue;
+            }
+
+            if (activePos.character === 0) {
+                // We have reached the beginning of the line.  Stop deleting.
+                done = true;
+                continue;
+            }
+
+            const prevCharRange = new vscode.Range(
+                activePos.line, activePos.character - 1,
+                activePos.line, activePos.character
+            );
+
+            const prevChar = editor.document.getText(prevCharRange);
+
+            if (!/\s/.test(prevChar)) {
+                if (numDeletionsMade === 0) {
+                    // The user has backspaced over a non-whitespace character.
+                    // Behave like a normal backspace.
+                    await vscode.commands.executeCommand("deleteLeft");
+                    numDeletionsMade++;
+                }
+                done = true;
+                continue;
+            }
+            // The previous character is whitespace.  Delete it.
+            await vscode.commands.executeCommand("deleteLeft");
+            numDeletionsMade++;
+        }
+    });
+    context.subscriptions.push(disposable);
 }
 
 // this method is called when your extension is deactivated
