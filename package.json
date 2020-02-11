@@ -14,7 +14,9 @@
 		"onCommand:extension.airlinerUntabify",
 		"onCommand:extension.airlinerCutToEol",
         "onCommand:extension.airlinerAppendSemicolon",
-        "onCommand:extension.airlinerHungryBackspace"
+        "onCommand:extension.airlinerHungryBackspace",
+        "onCommand:extension.airlinerHungryDeleteRight"
+
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -38,6 +40,10 @@
             {
                 "command": "extension.airlinerHungryBackspace",
                 "title": "Airliner Hungry Backspace"
+            },
+            {
+                "command": "extension.airlinerHungryDeleteRight",
+                "title": "Airliner Hungry Delete Right"
             }
 		]
 	},

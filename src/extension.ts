@@ -222,19 +222,27 @@ export function activate(context: vscode.ExtensionContext) {
 
         let done = false;
         let numDeletionsMade = 0;
-        while (!done) {
-
+        // A helper function that helps keep track of how many deletions have
+        // been made.
+        const doBackspace = async function (): Promise<void>
+        {
+            await vscode.commands.executeCommand("deleteLeft");
+            numDeletionsMade++;
+        };
+        while (!done)
+        {
             const activePos = editor.selection.active;
-            if (numDeletionsMade === 0 && activePos.character === 0) {
+            if (numDeletionsMade === 0 && activePos.character === 0)
+            {
                 // If we are just starting and in column 0, backspace to the end
                 // of the preceding line.  In this case, we are not done and may
                 // delete whitespace at the end of the preceding line.
-                await vscode.commands.executeCommand("deleteLeft");
-                numDeletionsMade++;
+                await doBackspace();
                 continue;
             }
-
-            if (activePos.character === 0) {
+                   // xyzzy
+            if (activePos.character === 0)
+            {
                 // We have reached the beginning of the line.  Stop deleting.
                 done = true;
                 continue;
@@ -247,23 +255,105 @@ export function activate(context: vscode.ExtensionContext) {
 
             const prevChar = editor.document.getText(prevCharRange);
 
-            if (!/\s/.test(prevChar)) {
-                if (numDeletionsMade === 0) {
+            if (!/\s/.test(prevChar))
+            {
+                if (numDeletionsMade === 0)
+                {
                     // The user has backspaced over a non-whitespace character.
                     // Behave like a normal backspace.
-                    await vscode.commands.executeCommand("deleteLeft");
-                    numDeletionsMade++;
+                    await doBackspace();
                 }
                 done = true;
                 continue;
             }
             // The previous character is whitespace.  Delete it.
-            await vscode.commands.executeCommand("deleteLeft");
-            numDeletionsMade++;
+            await doBackspace();
         }
     });
+    context.subscriptions.push(disposable);
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+
+    disposable = vscode.commands.registerCommand("extension.airlinerHungryDeleteRight", async () =>
+    {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor)
+        {
+            vscode.window.showInformationMessage("There is no active editor.");
+            return;
+        }
+        const doc = vscode.window.activeTextEditor!.document;
+        let done = false;
+        let numDeletionsMade = 0;
+        // A helper function that helps keep track of how many deletions have
+        // been made.
+        const doDeleteRight = async function(): Promise<void> {
+            await vscode.commands.executeCommand("deleteRight");
+            numDeletionsMade++;
+        };
+        while (!done)
+        {
+            const activePos = editor.selection.active;
+            if (numDeletionsMade === 0 && isAtEndOfLine(doc, activePos))
+            {
+                // If we are starting at the end of a line, delete right to pull
+                // up the following line.  In this case, we are not done and may
+                // delete whitespace at the beginning of the next line.
+                await doDeleteRight();
+                continue;
+            }
+
+            if (isAtEndOfLine(doc, activePos))
+            {
+                // We have reached the end of the line.  Stop deleting.
+                done = true;
+                continue;
+            }
+
+            const nextCharRange = new vscode.Range(
+                activePos.line, activePos.character,
+                activePos.line, activePos.character + 1
+            );
+
+            const nextChar = editor.document.getText(nextCharRange);
+
+            if (!/\s/.test(nextChar))
+            {
+                if (numDeletionsMade === 0)
+                {
+                    // The user has deleted a non-whitespace character.
+                    // Behave like a normal backspace.
+                    await doDeleteRight();
+                }
+                done = true;
+                continue;
+            }
+            // The next character is whitespace.  Delete it.
+            await doDeleteRight();
+        }
+    });
+
     context.subscriptions.push(disposable);
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
+
+
+/**
+ * Helper function that determines whether `position` is at the end of its line
+ * @param doc - The document containing `position`
+ * @param position - The position to be tested
+ * @return Whether `position` is at the end of its line
+ */
+function isAtEndOfLine(
+    doc: vscode.TextDocument,
+    position: vscode.Position
+): boolean
+{
+    const exaggeratedEndOfLine = new vscode.Position(position.line, position.character + 100000);
+    const validated = doc.validatePosition(exaggeratedEndOfLine);
+    return (position.line === validated.line) &&
+           (position.character === validated.character);
+}
