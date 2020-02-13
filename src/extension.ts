@@ -20,8 +20,12 @@ export function activate(context: vscode.ExtensionContext) {
 
     let disposable: vscode.Disposable;
 
-    ////////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // Comments/uncomments the current selection or line.
+    //
+    ////////////////////////////////////////////////////////////////////////////
     disposable = vscode.commands.registerCommand("extension.airlinerToggleComment", async () =>
     {
         const editor = vscode.window.activeTextEditor;
@@ -70,6 +74,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 
     ////////////////////////////////////////////////////////////////////////////
+    //
+    // Removes tab characters from the current document.
+    //
+    ////////////////////////////////////////////////////////////////////////////
 
     disposable = vscode.commands.registerCommand("extension.airlinerUntabify", async () =>
     {
@@ -106,6 +114,13 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
 
 
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // Cuts selected text or the text between the cursor and the end of the line
+    // (if no text is selected).  If this command is executed repeatedly without
+    // more than a 2 second delay, the cut text is appended to the text already
+    // on the clipboard, thus accruing it.
+    //
     ////////////////////////////////////////////////////////////////////////////
 
     // If the user executes this command within this timeout period, this
@@ -192,7 +207,11 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
 
-    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // Appends a semicolon onto the end of the current line.  Pretty simple.
+    //
+    ////////////////////////////////////////////////////////////////////////////
 
     disposable = vscode.commands.registerCommand("extension.airlinerAppendSemicolon", async () =>
     {
@@ -209,7 +228,12 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
 
 
-    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // Deletes whitespace characters to the left of the cursor until either a
+    // non-whitespace character is encountered or the beginning of the line.
+    //
+    ////////////////////////////////////////////////////////////////////////////
 
     disposable = vscode.commands.registerCommand("extension.airlinerHungryBackspace", async () =>
     {
@@ -273,7 +297,12 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
 
 
-    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // Deletes whitespace characters to the right of the cursor until either a
+    // non-whitespace character is encountered or the end of the line.
+    //
+    ////////////////////////////////////////////////////////////////////////////
 
     disposable = vscode.commands.registerCommand("extension.airlinerHungryDeleteRight", async () =>
     {
@@ -332,6 +361,57 @@ export function activate(context: vscode.ExtensionContext) {
             // The next character is whitespace.  Delete it.
             await doDeleteRight();
         }
+    });
+
+    context.subscriptions.push(disposable);
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // Splits the current editor and takes you to the top of the file.  This is
+    // convenient when you have to add import statements or a #include to the
+    // top of you current file and don't want to lose your position.
+    //
+    ////////////////////////////////////////////////////////////////////////////
+    disposable = vscode.commands.registerCommand("extension.airlinerSplitTop", async () =>
+    {
+        // await vscode.commands.executeCommand("workbench.action.splitEditorDown");
+        await vscode.commands.executeCommand("extension.airlinerSplitEditorDown");
+        await vscode.commands.executeCommand("cursorTop");
+    });
+
+    context.subscriptions.push(disposable);
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // The normal vscode "workbench.action.splitEditorDown" command does not
+    // make sure that the cursor is visible in either the original editor nor
+    // the new editor.  So, if your cursor is in the lower half of the editor
+    // and you split it, you wil have no idea where your cursor is until you
+    // move it.  This command fixes that.
+    //
+    ////////////////////////////////////////////////////////////////////////////
+    disposable = vscode.commands.registerCommand("extension.airlinerSplitEditorDown", async () =>
+    {
+        const topEditor = vscode.window.activeTextEditor;
+        if (!topEditor)
+        {
+            vscode.window.showInformationMessage("There is no active editor.");
+            return;
+        }
+        const topCursorPos = topEditor.selection.active;
+
+        await vscode.commands.executeCommand("workbench.action.splitEditorDown");
+        const bottomEditor = vscode.window.activeTextEditor!;
+
+        topEditor.revealRange(
+            new vscode.Range(topCursorPos, topCursorPos),
+            vscode.TextEditorRevealType.InCenterIfOutsideViewport
+        );
+        bottomEditor.revealRange(
+            new vscode.Range(topCursorPos, topCursorPos),
+            vscode.TextEditorRevealType.InCenterIfOutsideViewport
+        );
     });
 
     context.subscriptions.push(disposable);

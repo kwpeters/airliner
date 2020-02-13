@@ -15,7 +15,9 @@
 		"onCommand:extension.airlinerCutToEol",
         "onCommand:extension.airlinerAppendSemicolon",
         "onCommand:extension.airlinerHungryBackspace",
-        "onCommand:extension.airlinerHungryDeleteRight"
+        "onCommand:extension.airlinerHungryDeleteRight",
+        "onCommand:extension.airlinerSplitTop",
+        "onCommand:extension.airlinerSplitEditorDown"
 
 	],
 	"main": "./out/extension.js",
@@ -44,6 +46,14 @@
             {
                 "command": "extension.airlinerHungryDeleteRight",
                 "title": "Airliner Hungry Delete Right"
+            },
+            {
+                "command": "extension.airlinerSplitTop",
+                "title": "Airliner Split and Goto Top"
+            },
+            {
+                "command": "extension.airlinerSplitEditorDown",
+                "title": "Airliner Split Editor Down"
             }
 		]
 	},
