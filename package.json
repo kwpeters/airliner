@@ -13,21 +13,20 @@
 		"onCommand:extension.airlinerToggleComment",
 		"onCommand:extension.airlinerUntabify",
 		"onCommand:extension.airlinerCutToEol",
-        "onCommand:extension.airlinerAppendSemicolon",
-        "onCommand:extension.airlinerHungryBackspace",
-        "onCommand:extension.airlinerHungryDeleteRight",
-        "onCommand:extension.airlinerSplitTop",
-        "onCommand:extension.airlinerSplitEditorDown"
-
+		"onCommand:extension.airlinerAppendSemicolon",
+		"onCommand:extension.airlinerHungryBackspace",
+		"onCommand:extension.airlinerHungryDeleteRight",
+		"onCommand:extension.airlinerSplitTop",
+		"onCommand:extension.airlinerSplitEditorDown"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
-            {
-                "command": "extension.airlinerToggleComment",
-                "title": "Airliner Toggle Comment"
-            },
-            {
+			{
+				"command": "extension.airlinerToggleComment",
+				"title": "Airliner Toggle Comment"
+			},
+			{
 				"command": "extension.airlinerUntabify",
 				"title": "Airliner Untabify"
 			},
@@ -35,26 +34,26 @@
 				"command": "extension.airlinerCutToEol",
 				"title": "Airliner Cut to EOL"
 			},
-            {
-                "command": "extension.airlinerAppendSemicolon",
-                "title": "Airliner Append Semicolon"
-            },
-            {
-                "command": "extension.airlinerHungryBackspace",
-                "title": "Airliner Hungry Backspace"
-            },
-            {
-                "command": "extension.airlinerHungryDeleteRight",
-                "title": "Airliner Hungry Delete Right"
-            },
-            {
-                "command": "extension.airlinerSplitTop",
-                "title": "Airliner Split and Goto Top"
-            },
-            {
-                "command": "extension.airlinerSplitEditorDown",
-                "title": "Airliner Split Editor Down"
-            }
+			{
+				"command": "extension.airlinerAppendSemicolon",
+				"title": "Airliner Append Semicolon"
+			},
+			{
+				"command": "extension.airlinerHungryBackspace",
+				"title": "Airliner Hungry Backspace"
+			},
+			{
+				"command": "extension.airlinerHungryDeleteRight",
+				"title": "Airliner Hungry Delete Right"
+			},
+			{
+				"command": "extension.airlinerSplitTop",
+				"title": "Airliner Split and Goto Top"
+			},
+			{
+				"command": "extension.airlinerSplitEditorDown",
+				"title": "Airliner Split Editor Down"
+			}
 		]
 	},
 	"scripts": {
