@@ -264,10 +264,11 @@ export function activate(context: vscode.ExtensionContext) {
                 await doBackspace();
                 continue;
             }
-                   // xyzzy
+//
             if (activePos.character === 0)
             {
-                // We have reached the beginning of the line.  Stop deleting.
+                // Deletions have already been made and we have reached the
+                // beginning of the line.  Stop deleting.
                 done = true;
                 continue;
             }
@@ -290,7 +291,9 @@ export function activate(context: vscode.ExtensionContext) {
                 done = true;
                 continue;
             }
-            // The previous character is whitespace.  Delete it.
+
+            // The previous character is whitespace.  Delete it. We are not done
+            // yet.
             await doBackspace();
         }
     });
