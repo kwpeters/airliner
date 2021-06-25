@@ -253,6 +253,7 @@ export function activate(context: vscode.ExtensionContext) {
             await vscode.commands.executeCommand("deleteLeft");
             numDeletionsMade++;
         };
+
         while (!done)
         {
             const activePos = editor.selection.active;
@@ -264,7 +265,7 @@ export function activate(context: vscode.ExtensionContext) {
                 await doBackspace();
                 continue;
             }
-//
+
             if (activePos.character === 0)
             {
                 // Deletions have already been made and we have reached the
