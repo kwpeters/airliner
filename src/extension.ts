@@ -391,7 +391,7 @@ export function activate(context: vscode.ExtensionContext) {
     // The normal vscode "workbench.action.splitEditorDown" command does not
     // make sure that the cursor is visible in either the original editor nor
     // the new editor.  So, if your cursor is in the lower half of the editor
-    // and you split it, you wil have no idea where your cursor is until you
+    // and you split it, you will have no idea where your cursor is until you
     // move it.  This command fixes that.
     //
     ////////////////////////////////////////////////////////////////////////////
