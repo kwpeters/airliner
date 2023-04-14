@@ -168,7 +168,7 @@ export function activate(context: vscode.ExtensionContext) {
             else {
                 textToCopy += toEolText;
 
-                // Remove the kill text from the doucment.
+                // Remove the kill text from the document.
                 await editor.edit((editBuilder: vscode.TextEditorEdit) => {
                     editBuilder.replace(toEolRange, "");
                 });
@@ -181,7 +181,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         copyPaste.copy(textToCopy);
 
-        // Restart the accure timeout.
+        // Restart the accrue timeout.
         accrueTimeout.start();
     });
     context.subscriptions.push(disposable);
