@@ -26,8 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Comments/uncomments the current selection or line.
     //
     ////////////////////////////////////////////////////////////////////////////
-    disposable = vscode.commands.registerCommand("extension.airlinerToggleComment", async () =>
-    {
+    disposable = vscode.commands.registerCommand("extension.airlinerToggleComment", async () => {
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
             vscode.window.showInformationMessage('There is no active editor.');
@@ -79,8 +78,7 @@ export function activate(context: vscode.ExtensionContext) {
     //
     ////////////////////////////////////////////////////////////////////////////
 
-    disposable = vscode.commands.registerCommand("extension.airlinerUntabify", async () =>
-    {
+    disposable = vscode.commands.registerCommand("extension.airlinerUntabify", async () => {
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
             vscode.window.showInformationMessage("There is no active editor.");
@@ -129,8 +127,7 @@ export function activate(context: vscode.ExtensionContext) {
     const accrueTimeout = new Timeout(2 * 1000);
     const textWithLeadingWhitespace = /^(?<leadingWhitespace>\s+)\S+/;
 
-    disposable = vscode.commands.registerCommand("extension.airlinerCutToEol", async () =>
-    {
+    disposable = vscode.commands.registerCommand("extension.airlinerCutToEol", async () => {
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
             vscode.window.showInformationMessage("There is no active editor.");
@@ -190,8 +187,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
 
     // Helper function that gets the current contents of the clipboard.
-    function getClipboardContent(): Promise<string>
-    {
+    function getClipboardContent(): Promise<string> {
         return new Promise((resolve) => {
             copyPaste.paste((err, clipboardContents: string) => {
                 if (err) {
@@ -213,8 +209,7 @@ export function activate(context: vscode.ExtensionContext) {
     //
     ////////////////////////////////////////////////////////////////////////////
 
-    disposable = vscode.commands.registerCommand("extension.airlinerAppendSemicolon", async () =>
-    {
+    disposable = vscode.commands.registerCommand("extension.airlinerAppendSemicolon", async () => {
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
             vscode.window.showInformationMessage("There is no active editor.");
@@ -235,11 +230,9 @@ export function activate(context: vscode.ExtensionContext) {
     //
     ////////////////////////////////////////////////////////////////////////////
 
-    disposable = vscode.commands.registerCommand("extension.airlinerHungryBackspace", async () =>
-    {
+    disposable = vscode.commands.registerCommand("extension.airlinerHungryBackspace", async () => {
         const editor = vscode.window.activeTextEditor;
-        if (!editor)
-        {
+        if (!editor) {
             vscode.window.showInformationMessage("There is no active editor.");
             return;
         }
@@ -248,17 +241,14 @@ export function activate(context: vscode.ExtensionContext) {
         let numDeletionsMade = 0;
         // A helper function that helps keep track of how many deletions have
         // been made.
-        const doBackspace = async function (): Promise<void>
-        {
+        const doBackspace = async function (): Promise<void> {
             await vscode.commands.executeCommand("deleteLeft");
             numDeletionsMade++;
         };
 
-        while (!done)
-        {
+        while (!done) {
             const activePos = editor.selection.active;
-            if (numDeletionsMade === 0 && activePos.character === 0)
-            {
+            if (numDeletionsMade === 0 && activePos.character === 0) {
                 // If we are just starting and in column 0, backspace to the end
                 // of the preceding line.  In this case, we are not done and may
                 // delete whitespace at the end of the preceding line.
@@ -266,8 +256,7 @@ export function activate(context: vscode.ExtensionContext) {
                 continue;
             }
 
-            if (activePos.character === 0)
-            {
+            if (activePos.character === 0) {
                 // Deletions have already been made and we have reached the
                 // beginning of the line.  Stop deleting.
                 done = true;
@@ -281,10 +270,8 @@ export function activate(context: vscode.ExtensionContext) {
 
             const prevChar = editor.document.getText(prevCharRange);
 
-            if (!/\s/.test(prevChar))
-            {
-                if (numDeletionsMade === 0)
-                {
+            if (!/\s/.test(prevChar)) {
+                if (numDeletionsMade === 0) {
                     // The user has backspaced over a non-whitespace character.
                     // Behave like a normal backspace.
                     await doBackspace();
@@ -308,11 +295,9 @@ export function activate(context: vscode.ExtensionContext) {
     //
     ////////////////////////////////////////////////////////////////////////////
 
-    disposable = vscode.commands.registerCommand("extension.airlinerHungryDeleteRight", async () =>
-    {
+    disposable = vscode.commands.registerCommand("extension.airlinerHungryDeleteRight", async () => {
         const editor = vscode.window.activeTextEditor;
-        if (!editor)
-        {
+        if (!editor) {
             vscode.window.showInformationMessage("There is no active editor.");
             return;
         }
@@ -325,11 +310,9 @@ export function activate(context: vscode.ExtensionContext) {
             await vscode.commands.executeCommand("deleteRight");
             numDeletionsMade++;
         };
-        while (!done)
-        {
+        while (!done) {
             const activePos = editor.selection.active;
-            if (numDeletionsMade === 0 && isAtEndOfLine(doc, activePos))
-            {
+            if (numDeletionsMade === 0 && isAtEndOfLine(doc, activePos)) {
                 // If we are starting at the end of a line, delete right to pull
                 // up the following line.  In this case, we are not done and may
                 // delete whitespace at the beginning of the next line.
@@ -337,8 +320,7 @@ export function activate(context: vscode.ExtensionContext) {
                 continue;
             }
 
-            if (isAtEndOfLine(doc, activePos))
-            {
+            if (isAtEndOfLine(doc, activePos)) {
                 // We have reached the end of the line.  Stop deleting.
                 done = true;
                 continue;
@@ -351,10 +333,8 @@ export function activate(context: vscode.ExtensionContext) {
 
             const nextChar = editor.document.getText(nextCharRange);
 
-            if (!/\s/.test(nextChar))
-            {
-                if (numDeletionsMade === 0)
-                {
+            if (!/\s/.test(nextChar)) {
+                if (numDeletionsMade === 0) {
                     // The user has deleted a non-whitespace character.
                     // Behave like a normal backspace.
                     await doDeleteRight();
@@ -377,8 +357,7 @@ export function activate(context: vscode.ExtensionContext) {
     // top of you current file and don't want to lose your position.
     //
     ////////////////////////////////////////////////////////////////////////////
-    disposable = vscode.commands.registerCommand("extension.airlinerSplitTop", async () =>
-    {
+    disposable = vscode.commands.registerCommand("extension.airlinerSplitTop", async () => {
         // await vscode.commands.executeCommand("workbench.action.splitEditorDown");
         await vscode.commands.executeCommand("extension.airlinerSplitEditorDown");
         await vscode.commands.executeCommand("cursorTop");
@@ -395,11 +374,9 @@ export function activate(context: vscode.ExtensionContext) {
     // move it.  This command fixes that.
     //
     ////////////////////////////////////////////////////////////////////////////
-    disposable = vscode.commands.registerCommand("extension.airlinerSplitEditorDown", async () =>
-    {
+    disposable = vscode.commands.registerCommand("extension.airlinerSplitEditorDown", async () => {
         const topEditor = vscode.window.activeTextEditor;
-        if (!topEditor)
-        {
+        if (!topEditor) {
             vscode.window.showInformationMessage("There is no active editor.");
             return;
         }
@@ -434,8 +411,7 @@ export function deactivate() {}
 function isAtEndOfLine(
     doc: vscode.TextDocument,
     position: vscode.Position
-): boolean
-{
+): boolean {
     const exaggeratedEndOfLine = new vscode.Position(position.line, position.character + 100000);
     const validated = doc.validatePosition(exaggeratedEndOfLine);
     return (position.line === validated.line) &&
