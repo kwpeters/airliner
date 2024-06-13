@@ -22,6 +22,8 @@
 
 ## Subsequent updates
 
+From this repo's root directory:
+
 ```powershell
-./node_modules/.bin/tsc -p ./ && copywrite full . C:/Users/kwpeters/.vscode/extensions/airliner/
+./node_modules/.bin/tsc -p ./ && copywrite full . C:\Users\kwpeters\.vscode\extensions\undefined_publisher.airliner-0.0.1
 ```
