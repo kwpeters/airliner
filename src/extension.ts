@@ -397,6 +397,27 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(disposable);
 
+    disposable = vscode.commands.registerCommand("extension.airlinerOpenVisualStudio", async () => {
+
+        // const activeFile = new File(vscode.window.activeTextEditor?.document.fileName);
+        //
+        // if (vscode.workspace.workspaceFolders !== undefined) {
+        //
+        //
+        //     // const f = vscode.workspace.workspaceFolders[0].uri.fsPath;
+        //
+        //     // const message = `YOUR-EXTENSION: folder: ${wf} - ${f}`;
+        //     // vscode.window.showInformationMessage(message);
+        // }
+        // else {
+        //     const message = "YOUR-EXTENSION: Working folder not found, open a folder an try again";
+        //
+        //     vscode.window.showErrorMessage(message);
+        // }
+    });
+
+    context.subscriptions.push(disposable);
+
 
     ////////////////////////////////////////////////////////////////////////////
     // An example of how to prompt the user for a choice.

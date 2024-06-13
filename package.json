@@ -17,7 +17,8 @@
 		"onCommand:extension.airlinerHungryBackspace",
 		"onCommand:extension.airlinerHungryDeleteRight",
 		"onCommand:extension.airlinerSplitTop",
-		"onCommand:extension.airlinerSplitEditorDown"
+		"onCommand:extension.airlinerSplitEditorDown",
+        "onCommand:extension.airlinerOpenVisualStudio"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -53,7 +54,11 @@
 			{
 				"command": "extension.airlinerSplitEditorDown",
 				"title": "Airliner Split Editor Down"
-			}
+			},
+            {
+                "command": "extension.airlinerOpenVisualStudio",
+                "title": "Open Visual Studio solution"
+            }
 		]
 	},
 	"scripts": {
