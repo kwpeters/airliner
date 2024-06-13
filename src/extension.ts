@@ -396,7 +396,27 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(disposable);
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // An example of how to prompt the user for a choice.
+    ////////////////////////////////////////////////////////////////////////////
+    // disposable = vscode.commands.registerCommand('extension.quickPickExample', async function () {
+    //     const options = ['Option 1', 'Option 2', 'Option 3'];
+    //     const selected = await vscode.window.showQuickPick(options, {
+    //         placeHolder: 'Choose an option',
+    //     });
+    //
+    //     if (selected) {
+    //         vscode.window.showInformationMessage(`You selected: ${selected}`);
+    //     } else {
+    //         vscode.window.showInformationMessage('No option was selected!');
+    //     }
+    // });
+    // context.subscriptions.push(disposable);
 }
+
+
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
