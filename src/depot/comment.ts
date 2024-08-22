@@ -3,8 +3,7 @@ import {removeBlankLines, splitIntoLines, numInitial, isBlank, getEol} from "./s
 import { insertIf } from "./arrayHelpers";
 
 
-function getCommentToken(): string
-{
+function getCommentToken(): string {
     return "//";
 }
 
@@ -21,12 +20,12 @@ function getCommentToken(): string
 export function comment(
     linesToComment: string,
     precedingLine?: string
-): string | undefined
-{
+): string | undefined {
+    // TODO: Convert the regex to used named captures.
+    // eslint-disable-next-line prefer-named-capture-group
     const commentedLineRegex = /^(?<begin_ws>\s*)(?<comment_token>(\/\/)|(#))(?<post_comment_ws>\s*)(?<text>.*)/;
 
     if (linesToComment.length === 0 || /^\s*$/.test(linesToComment)) {
-
         if (precedingLine) {
             const match = commentedLineRegex.exec(precedingLine);
             if (match) {
@@ -70,31 +69,30 @@ export function comment(
         // The amount of indentation will be determined by the line with the
         // least indentation characters at the beginning.
         const numIndentChars = _.chain(linesToConsider)
-            .map((curLine) => numInitial(curLine, indentChar))
-            .min()
-            .value();
+        .map((curLine) => numInitial(curLine, indentChar))
+        .min()
+        .value();
 
         indentStr = _.repeat(indentChar, numIndentChars);
     }
 
     const result: string = _.chain(sourceLines)
-        .map((curLine) =>
-        {
-            // The original text that will follow the comment token.
-            // If the current line is a blank one, it may be zero-length, so we will
-            // use the whole line in order to get the EOL.  If it is not blank, it
-            // will be everything following the common indent.
-            const blank = isBlank(curLine);
-            const sourceText = blank ? getEol(curLine) :
-                                       curLine.slice(indentStr.length);
+    .map((curLine) => {
+        // The original text that will follow the comment token.
+        // If the current line is a blank one, it may be zero-length, so we will
+        // use the whole line in order to get the EOL.  If it is not blank, it
+        // will be everything following the common indent.
+        const blank = isBlank(curLine);
+        const sourceText = blank ? getEol(curLine) || "" :
+                                   curLine.slice(indentStr.length);
 
-            // The whitespace that will follow the comment token.
-            const postCommentSpace = blank ? "" : " ";
+        // The whitespace that will follow the comment token.
+        const postCommentSpace = blank ? "" : " ";
 
-            return `${indentStr}${getCommentToken()}${postCommentSpace}${sourceText}`;
-        })
-        .join("")
-        .value();
+        return `${indentStr}${getCommentToken()}${postCommentSpace}${sourceText}`;
+    })
+    .join("")
+    .value();
 
     return result;
 }
@@ -106,8 +104,7 @@ export function comment(
  * `undefined` is returned if there was an error and the original source should
  * not be replaced.
  */
-export function uncomment(linesToUncomment: string): string | undefined
-{
+export function uncomment(linesToUncomment: string): string | undefined {
     if (linesToUncomment.length === 0 || /^\s*$/.test(linesToUncomment)) {
         // There is nothing in need of uncommenting.
         return undefined;
@@ -117,8 +114,7 @@ export function uncomment(linesToUncomment: string): string | undefined
     const commentedLineRegex = /^(?<begin_ws>\s*)(?<comment_token>(\/\/)|(#))(?<post_comment_ws>\s*)(?<text>.*)/;
 
     const resultLines = _.chain(sourceLines)
-    .map((curLine) =>
-    {
+    .map((curLine) => {
         const match = commentedLineRegex.exec(curLine);
         if (!match) {
             return curLine;
@@ -130,7 +126,7 @@ export function uncomment(linesToUncomment: string): string | undefined
         // was add with the comment token itself.
         const newPostCommentWs = match.groups!.post_comment_ws.slice(1);
         const text             = match.groups!.text;
-        const eol              = getEol(curLine);
+        const eol              = getEol(curLine) || "";
         const uncommented      = beginWs + newPostCommentWs + text + eol;
         return uncommented;
     })
@@ -148,8 +144,9 @@ export function uncomment(linesToUncomment: string): string | undefined
  * returned if there was an error and the original source should not be
  * replaced.
  */
-export function toggleComment(linesToToggle: string, precedingLine?: string): string | undefined
-{
+export function toggleComment(linesToToggle: string, precedingLine?: string): string | undefined {
+    // TODO: Convert the following regex to use named capture groups.
+    // eslint-disable-next-line prefer-named-capture-group
     const firstNonWhitespace = /\s*(\S\S)/m;
     const match = firstNonWhitespace.exec(linesToToggle);
     if (match && match[1] === "//") {
