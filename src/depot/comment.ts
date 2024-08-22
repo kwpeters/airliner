@@ -124,10 +124,17 @@ export function uncomment(linesToUncomment: string): string | undefined {
         // For the post-comment whitespace, we will use all of it except the
         // first character.  We are assuming that the first whitespace character
         // was add with the comment token itself.
-        const newPostCommentWs = match.groups!.post_comment_ws.slice(1);
+        const postCommentWs = match.groups!.post_comment_ws;
+        const newPostCommentWs =
+            isBlank(postCommentWs) ?
+            "" :
+            postCommentWs.slice(1);
         const text             = match.groups!.text;
         const eol              = getEol(curLine) || "";
-        const uncommented      = beginWs + newPostCommentWs + text + eol;
+        let uncommented      = beginWs + newPostCommentWs + text + eol;
+        if (isBlank(uncommented)) {
+            uncommented = eol;
+        }
         return uncommented;
     })
     .value();
