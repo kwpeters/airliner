@@ -126,7 +126,7 @@ export function uncomment(linesToUncomment: string): string | undefined {
         // was add with the comment token itself.
         const postCommentWs = match.groups!.post_comment_ws;
         const newPostCommentWs =
-            isBlank(postCommentWs) ?
+            isBlank(postCommentWs) && isBlank(match.groups!.text!) ?
             "" :
             postCommentWs.slice(1);
         const text             = match.groups!.text;
